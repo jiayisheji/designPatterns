@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>策略模式---表单验证</title>
+</head>
+<body>
+	<form id="form">
+		请输入用户名：<input type="text" name="userName" id="" /><br />
+		请输入密码：<input type="paddword" name="userPassword" id="" /><br />
+		请输入手机号：<input type="text" name="userPhone" id="" /><br />
+		<button>提交</button>		
+	</form>	
+</body>
+</html>
+<script type="text/javascript">
+	var strategies = {    //表单验证逻辑
+			isNotEmpty : function(value , errMsg){  //不能为空
+				if(!!!value){
+					return errMsg;
+				}
+			},
+			minLength : function(value , len , errMsg){   //最小长度
+				if(value.length < len){
+					return errMsg;
+				}
+			},
+			maxLength : function(value , len , errMsg){    //最大长度
+				if(value.length > len){
+					return errMsg;
+				}
+			},
+			isPhone : function(value , errMsg){   //验证手机
+				if(!/^(13[0-9]{9}|15[012356789][0-9]{8}|18[0123456789][0-9]{8}|147[0-9]{8}|170[0-9]{8}|177[0-9]{8})$/.test(value)){
+					return errMsg;
+				}
+			},
+			isPassWord : function(value , errMsg){  //验证密码
+				if(/^[\@A-Za-z0-9\!\#\$\%\^\&\*\.\~]$/.test(value)){
+					return errMsg;
+				}
+			},
+			isEmail : function(value , errMsg){
+
+			},
+			isNumber : function(value , errMsg){
+
+			}
+		}
+var Validator = function(){
+	this.cache = [];
+}
+Validator.prototype = {
+	add : function(dom , rules){
+		var self = this;
+		for (var i = 0, rule; rule = rules[i++];){
+			(function(rule){
+				var strategyAry = rule.strategy.split(":"),
+					errorMsg = rule.errorMsg;
+					self.cache.push(function(){
+						var strategy = strategyAry.shift();
+						strategyAry.unshift(dom.value);
+						strategyAry.push(errorMsg);
+						return strategies[strategy].apply(dom,strategyAry); 
+					})
+			})(rule);
+		}
+	},
+	start : function(){
+		for(var i = 0, validatorFunc; validatorFunc = this.cache[i++];){
+			var errorMsg = validatorFunc();
+			if(errorMsg){
+				return errorMsg;
+			}
+		};
+	}
+}
+var oForm = document.getElementById('form'); 
+var validatorFunc = function(){
+	var validator = new Validator();
+	validator.add(oForm.userName , [     //验证用户名
+		{
+			strategy : 'isNotEmpty',
+			errorMsg : '用户名不能为空'
+		},
+		{
+			strategy : 'minLength:2',
+			errorMsg : '长度不能小于2位'
+		},
+		{
+			strategy : 'maxLength:20',
+			errorMsg : '长度不能大于20位'
+		}
+	]);
+	validator.add(oForm.userPassword , [  //验证密码
+		{
+			strategy : 'isNotEmpty',
+			errorMsg : '密码不能为空'
+		},
+		{
+			strategy : 'isPassWord',
+			errorMsg : '密码格式包括英文字母数字'
+		},
+		{
+			strategy : 'minLength:6',
+			errorMsg : '长度不能小于6位'
+		},
+		{
+			strategy : 'maxLength:18',
+			errorMsg : '长度不能大于20位'
+		}
+	]);
+	validator.add(oForm.userPhone , [  //验证手机号码
+		{
+			strategy : 'isNotEmpty',
+			errorMsg : '手机号码不能为空'
+		},
+		{
+			strategy : 'isPhone',
+			errorMsg : '请输入正确11位手机号码'
+		}
+	]);
+	return validator.start();
+}
+oForm.onsubmit = function(){
+	var errMsg = validatorFunc();
+	console.log(errMsg)
+	if(errMsg){
+		alert(errMsg)
+		return false;
+	}
+}
+</script>
