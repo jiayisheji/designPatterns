@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+    ul {width: 200px;}
+    ul li{list-style: none;}
+    ul li h2 + ul{display: none;}
+    h2{font-size: 14px;}
+    li{font-size: 12px;}
+  </style>
+  <script type="text/javascript">
+  	window.onload=function() {
+  		var aLi = getId('list').children;
+  		for (var i = 0; i < aLi.length; i++){
+  			fuMenu(aLi[i])
+  		};
+  		function fuMenu(obj){
+  			var aH2 = getFirst( obj ),aUl = getNext( aH2 );
+  			aH2.onclick=function(){
+  				if(getFirst( aH2 ).innerHTML == "+"){
+  					for (var i = 0; i < obj.parentNode.getElementsByTagName('ul').length; i++) {
+  						obj.parentNode.getElementsByTagName('ul')[i].style.display = "none";
+  						obj.parentNode.getElementsByTagName('span')[i].innerHTML = "+";
+  					};
+  					aUl.style.display = "block";
+  					getFirst( aH2 ).innerHTML = "-";
+  				}else{
+  					aUl.style.display = "none";
+  					getFirst( aH2 ).innerHTML = "+";
+  				}
+  			}
+  			for (var i = 0; i < aUl.children.length; i++) {
+  				if(aUl.children[i].getElementsByTagName('ul')[0]){
+  					fuMenu(aUl.children[i])
+  				}
+  			};
+  		}
+  	}
+  	function getId(id){     //通过id获取元素
+	return document.getElementById(id);
+	}
+	function getTag(tag,obj){   //通过标签获取元素
+		return (obj || document).getElementsByTagName(tag);
+	} 
+	function getStyle(obj,attr){   //获取元素计算后的样式
+		return obj.currentStyle ? obj.currentStyle[attr] : getComputedStyle(obj)[attr];
+	}
+	function getPrev( obj ){    //获取上一个兄弟节点	
+		if( !obj || !obj.previousSibling ) return null;	
+		return obj.previousSibling.nodeType == 1 ? obj.previousSibling : getPrev( obj.previousSibling );
+	}
+	function getNext( obj ){     //获取下一个兄弟节点
+		if( !obj || !obj.nextSibling ) return null;	
+		return obj.nextSibling.nodeType == 1 ? obj.nextSibling : getNext( obj.nextSibling );	
+	}
+	function getFirst( obj ){    //获取第一个子节点	
+		if( !obj || !obj.firstChild ) return null;
+		return obj.firstChild.nodeType == 1 ? obj.firstChild : getNext( obj.firstChild );	
+	}
+	function getLast( obj ){     //获取最后一个子节点	
+		if( !obj || !obj.lastChild ) return null;	
+		return obj.lastChild.nodeType == 1 ? obj.lastChild : getPrev( obj.lastChild );	
+	}
+  </script>
+</head>
+<body>
+	<ul id="list">
+	    <li>
+	    	<h2><span>+</span>菜单一</h2>
+	    	<ul>
+	    		<li>
+	    			<h2><span>+</span>菜单2</h2>
+	    			<ul>
+			    		<li>
+			    			<h2><span>+</span>列表三</h2>
+			    			<ul>
+					    		<li>
+					    			<h2><span>+</span>列表四</h2>
+					    			<ul>
+							    		<li>
+							    			<h2><span>+</span>列表四</h2>
+							    			<ul>
+									    		<li><h2><span>+</span>列表无</h2>
+									    			<ul>
+											    		<li><h2>列表一</h2></li>
+											    		<li><h2>列表一</h2></li>
+											    		<li><h2>列表一</h2></li>
+											    	</ul>
+											    </li>
+									    		<li><h2>列表一</h2></li>
+									    		<li><h2>列表一</h2></li>
+									    	</ul>
+							    		</li>
+							    		<li><h2>列表四</h2></li>
+							    		<li><h2>列表四</h2></li>
+							    	</ul>
+					    		</li>
+					    		<li><h2>列表三</h2></li>
+					    		<li><h2>列表三</h2></li>
+					    	</ul>
+			    		</li>
+			    		<li><h2>列表二</h2></li>
+			    		<li><h2>列表二</h2></li>
+			    		<li><h2>列表二</h2></li>
+			    	</ul>
+	    		</li>
+	    		<li><h2>列表一</h2></li>
+	    		<li><h2>列表一</h2></li>
+	    		<li><h2>列表一</h2></li>
+	    	</ul>
+	    </li>
+	    <li>
+	    	<h2><span>+</span>菜单一</h2>
+	    	<ul>
+	    		<li><h2>列表一</h2></li>
+	    		<li><h2>列表一</h2></li>
+	    		<li><h2>列表一</h2></li>
+	    	</ul>
+	    </li>
+	    <li>
+	    	<h2><span>+</span>菜单一</h2>
+	    	<ul>
+	    		<li>
+	    			<h2><span>+</span>菜单2</h2>
+	    			<ul>
+			    		<li><h2>列表二</h2></li>
+			    		<li><h2>列表二</h2></li>
+			    		<li><h2>列表二</h2></li>
+			    		<li><h2>列表二</h2></li>
+			    	</ul>
+	    		</li>
+	    		<li><h2>列表一</h2></li>
+	    		<li><h2>列表一</h2></li>
+	    		<li><h2>列表一</h2></li>
+	    	</ul>
+	    </li>
+  	</ul>
+</body>
+</html>
